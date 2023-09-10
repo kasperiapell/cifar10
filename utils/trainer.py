@@ -1,6 +1,8 @@
 import torch
 from utils import plots
 
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 def train(net, optimizer, criterion, scheduler, train_loader, test_loader, epochs):
     train_losses, test_losses = [], []
 
@@ -18,6 +20,7 @@ def _train_cycle(net, optimizer, criterion, train_loader, train_losses, epoch, e
     total = 0
     
     for inputs, targets in train_loader:
+        inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
         optimizer.zero_grad()
         outputs = net(inputs)
         loss = criterion(outputs, targets)
@@ -44,6 +47,7 @@ def _test_cycle(net, optimizer, criterion, test_loader, test_losses, epoch):
     
     with torch.no_grad():
         for inputs, targets in test_loader:
+            inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
             outputs = net(inputs)
             loss = criterion(outputs, targets)
 
